@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>AI × HR 看板</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#0f1115;
+      --muted:rgba(15,17,21,.62);
+      --hair:rgba(15,17,21,.10);
+      --surface:#f5f5f7;
+      --surface2:#ffffff;
+      --shadow: 0 16px 44px rgba(0,0,0,.10);
+      --r: 22px;
+      --link:#0a66c2;
+      --accent:#0a84ff;
+    }
+    html[data-theme="dark"]{
+      --bg:#0b0b0d;
+      --text:#f5f5f7;
+      --muted:rgba(245,245,247,.72);
+      --hair:rgba(245,245,247,.14);
+      --surface:#141417;
+      --surface2:#0f1012;
+      --shadow: 0 18px 52px rgba(0,0,0,.70);
+      --link:#4da3ff;
+      --accent:#4da3ff;
+    }
+
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(980px 620px at 14% -18%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 62%),
+        radial-gradient(900px 760px at 110% 0%, color-mix(in srgb, var(--text) 6%, transparent), transparent 64%),
+        var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a{color:var(--link);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    /* No ugly underline on homepage module tiles */
+    .tile, .tile:hover{ text-decoration:none !important; }
+    .tile:hover *{ text-decoration:none !important; }
+
+    .wrap{max-width:1160px;margin:0 auto;padding:50px 20px 84px;}
+
+    .top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;flex-wrap:wrap;}
+    .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+    h1{margin:10px 0 0;font-size:62px;line-height:1.0;letter-spacing:-0.05em;}
+    .sub{margin:14px 0 0;max-width:none;color:var(--muted);font-size:15px;line-height:1.75;}
+    @media (min-width: 860px){
+      .sub{white-space:nowrap;}
+    }
+
+    .actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+    .chip{font-size:12px;color:var(--muted);padding:10px 12px;border-radius:999px;border:1px solid var(--hair);background:color-mix(in srgb, var(--surface) 92%, transparent);white-space:nowrap;}
+    .iconbtn{width:40px;height:40px;border-radius:999px;border:1px solid var(--hair);background:color-mix(in srgb, var(--surface2) 92%, transparent);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 1px 0 rgba(255,255,255,.20) inset;}
+    .iconbtn span{font-size:15px;line-height:1;color:var(--muted);}
+    html[data-theme="dark"] .iconbtn .sun{display:none;}
+    html:not([data-theme="dark"]) .iconbtn .moon{display:none;}
+
+    .grid{margin-top:26px;display:grid;grid-template-columns:repeat(3, 1fr);gap:14px;}
+    @media (max-width: 980px){.grid{grid-template-columns:repeat(2,1fr);} h1{font-size:46px;}}
+    @media (max-width: 560px){.grid{grid-template-columns:1fr;}}
+
+    .tile{
+      position:relative;
+      border-radius:var(--r);
+      border:1px solid var(--hair);
+      background: color-mix(in srgb, var(--surface) 92%, transparent);
+      padding:18px;
+      overflow:hidden;
+      min-height:140px;
+      box-shadow:none;
+      transition: transform .18s ease, box-shadow .18s ease, background-color .18s ease;
+    }
+    .tile:hover{transform: translateY(-2px); box-shadow: var(--shadow); background: color-mix(in srgb, var(--surface2) 92%, transparent);} 
+
+    .tile::before{
+      content:"";
+      position:absolute;left:0;top:0;bottom:0;width:6px;
+      background:var(--c, var(--accent));
+      opacity:.9;
+    }
+    .tile::after{
+      content:"";
+      position:absolute;left:0;right:0;top:0;height:90px;
+      background:linear-gradient(90deg, color-mix(in srgb, var(--c, var(--accent)) 14%, transparent), transparent 62%);
+      pointer-events:none;
+    }
+
+    .tile h2{margin:0;font-size:22px;letter-spacing:-0.02em;}
+    .tile p{margin:10px 0 0;color:var(--muted);line-height:1.65;font-size:13px;max-width:48ch;}
+    .go{position:absolute;right:16px;bottom:14px;font-size:12px;color:var(--muted);}
+
+    .row2{margin-top:18px;display:flex;gap:14px;flex-wrap:wrap;align-items:center;justify-content:space-between;}
+    .recent{flex:1 1 420px;border-radius:var(--r);border:1px solid var(--hair);background:color-mix(in srgb, var(--surface) 92%, transparent);padding:16px;}
+    .recent h3{margin:0;font-size:14px;color:var(--muted);font-weight:600;letter-spacing:.02em;}
+    .recent a{display:inline-flex;margin-top:10px;gap:8px;align-items:center;padding:10px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface2);}
+
+    .primary{
+      flex:0 0 auto;
+      border-radius:999px;
+      padding:12px 14px;
+      border:1px solid var(--hair);
+      background:color-mix(in srgb, var(--accent) 10%, var(--surface2));
+      color:var(--text);
+      cursor:pointer;
+      font-size:12px;
+    }
+
+    footer{margin-top:28px;color:var(--muted);font-size:12px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div>
+        <div class="eyebrow">Workforce · HR Tech · AI</div>
+        <h1>AI × HR 看板</h1>
+        <p class="sub">选择你关心的模块进入详细看板（可展开查看要点与来源）。每日 13:20 自动更新，覆盖近 7 天重要&nbsp;信息。</p>
+      </div>
+      <div class="actions">
+        <button class="iconbtn" id="themeToggle" title="切换日/夜模式" aria-label="切换日/夜模式"><span class="sun" aria-hidden="true">☀︎</span><span class="moon" aria-hidden="true">☾</span></button>
+        <span class="chip">⏱ 每日 13:20</span>
+        <span class="chip">近 7 天</span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <a class="tile" style="--c:#0a84ff" href="detail.html?section=recruiting"><h2>招聘与寻才</h2><p>ATS、简历解析、结构化面试、寻才与内部流动。</p><span class="go">进入 →</span></a>
+      <a class="tile" style="--c:#34c759" href="detail.html?section=employee"><h2>员工服务 / 共享服务</h2><p>政策问答、工单分流、流程执行、知识回流闭环。</p><span class="go">进入 →</span></a>
+      <a class="tile" style="--c:#ff9f0a" href="detail.html?section=payroll"><h2>薪酬社保 / 发薪 / 合规</h2><p>权限最小化、审计留痕、数据留存与合规治理。</p><span class="go">进入 →</span></a>
+      <a class="tile" style="--c:#af52de" href="detail.html?section=org"><h2>组织与学习 / 绩效</h2><p>技能标签、学习路径、内部流动与人才盘点。</p><span class="go">进入 →</span></a>
+      <a class="tile" style="--c:#ff2d55" href="detail.html?section=invest"><h2>投资与新产品</h2><p>融资、发布、并购、YC/加速器、开源工具雷达。</p><span class="go">进入 →</span></a>
+      <a class="tile" style="--c:#00c7be" href="detail.html?section=case"><h2>案例拆解</h2><p>为什么有效 + 从试点到规模化的可复用步骤与指标。</p><span class="go">进入 →</span></a>
+      <a class="tile" style="--c:#5ac8fa" href="detail.html?section=reading"><h2>延伸阅读 / 视频 / 报告</h2><p>观点文章、报告、视频访谈与方法论补充。</p><span class="go">进入 →</span></a>
+    </div>
+
+    <div class="row2">
+      <div class="recent">
+        <h3>最近一期</h3>
+        <a id="latestLink" href="archive/2026-01-28.md" target="_blank" rel="noopener noreferrer">2026-01-28 · 打开 Markdown 存档 →</a>
+      </div>
+      <button class="primary" onclick="location.href='detail.html'">打开完整看板 →</button>
+    </div>
+
+    <footer>提示：来源链接会在新标签页打开。你也可以固定此页作为首页。</footer>
+  </div>
+
+  <script>
+    // theme
+    const saved = localStorage.getItem('aihr_theme');
+    if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');}
+    document.getElementById('themeToggle')?.addEventListener('click', ()=>{
+      const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+      if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('aihr_theme','light');}
+      else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('aihr_theme','dark');}
+    });
+
+    // latest archive link (best-effort): keep as most recent file by filename
+    // (Updated by render script for accuracy once multiple days exist.)
+  </script>
+</body>
+</html>

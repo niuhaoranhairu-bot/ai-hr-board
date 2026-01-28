@@ -1,0 +1,743 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <title>AI × HR 早报</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --text:#0f1115;
+      --muted:rgba(15,17,21,.62);
+      --hair:rgba(15,17,21,.10);
+      --surface:#f5f5f7;
+      --surface2:#ffffff;
+      --shadow: 0 14px 40px rgba(0,0,0,.10);
+      --r: 20px;
+      --link:#0a66c2;
+      --accent:#0a84ff;
+    }
+
+    /* Manual dark mode (toggle) */
+    html[data-theme="dark"]{
+      --bg:#0b0b0d;
+      --text:#f5f5f7;
+      --muted:rgba(245,245,247,.72);
+      --hair:rgba(245,245,247,.14);
+      --surface:#141417;
+      --surface2:#0f1012;
+      --shadow: 0 18px 52px rgba(0,0,0,.70);
+      --link:#4da3ff;
+      --accent:#4da3ff;
+    }
+    /* Force light mode for Apple-like aesthetic (no dark palette). */
+
+    *{box-sizing:border-box;}
+    html,body{height:100%;}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      background:
+        radial-gradient(980px 620px at 14% -18%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 62%),
+        radial-gradient(900px 760px at 110% 0%, color-mix(in srgb, var(--text) 6%, transparent), transparent 64%),
+        var(--bg);
+      color: var(--text);
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a{color:var(--link);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    .wrap{max-width:1160px;margin:0 auto;padding:44px 20px 84px;}
+
+    /* Minimal content header for level-2 pages */
+    .subnav{position:sticky;top:0;z-index:50;border-bottom:1px solid var(--hair);background: color-mix(in srgb, var(--bg) 86%, transparent);backdrop-filter: blur(18px);-webkit-backdrop-filter: blur(18px);}
+    .subnav-inner{max-width:1160px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;}
+    .back{font-size:12px;color:var(--muted);padding:8px 10px;border-radius:999px;border:1px solid var(--hair);background:color-mix(in srgb, var(--surface) 92%, transparent);white-space:nowrap;}
+    .picker{display:flex;gap:10px;align-items:center;min-width:260px;flex:1 1 420px;}
+    .picker label{font-size:12px;color:var(--muted);white-space:nowrap;}
+    .picker select{width:100%;max-width:520px;border-radius:999px;border:1px solid var(--hair);background:color-mix(in srgb, var(--surface) 92%, transparent);color:var(--text);padding:10px 12px;font-size:13px;outline:none;}
+    .sub-actions{display:flex;gap:10px;align-items:center;flex:0 0 auto;}
+
+    /* Level-2: default show only selected module */
+    body[data-mode="single"] .hero,
+    body[data-mode="single"] .grid:not([style]),
+    body[data-mode="single"] footer{display:none;}
+    body[data-mode="single"] .section,
+    body[data-mode="single"] .card[data-section]{display:none;}
+    body[data-mode="single"] .section.active,
+    body[data-mode="single"] .card[data-section].active{display:block;}
+    body[data-mode="single"] .wrap{padding-top:18px;}
+
+
+    /* Sticky bar */
+    .bar{position:sticky;top:0;z-index:40;}
+    .bar-inner{
+      max-width:1160px;margin:0 auto;
+      padding:12px 20px;
+      border-bottom:1px solid var(--hair);
+      background: color-mix(in srgb, var(--bg) 84%, transparent);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    }
+
+
+    /* Top bar redesign: clearer hierarchy + nicer spacing */
+    .topbar{display:flex;gap:12px;align-items:center;justify-content:space-between;width:100%;}
+    .tabs-wrap{flex:1 1 auto;min-width:0;}
+    .tabs{max-width:100%;}
+        .tabs{gap:8px;padding:6px 8px;background:color-mix(in srgb, var(--surface) 94%, transparent);}
+    .tabs button{font-size:12px;padding:9px 12px;}
+    .tabs button.active{position:relative;}
+    .tabs button.active::after{
+      content:"";
+      position:absolute;
+      left:12px; right:12px; bottom:4px;
+      height:2px;
+      border-radius:999px;
+      background: color-mix(in srgb, var(--accent) 80%, transparent);
+    }
+
+    .search{flex:0 0 360px;max-width:40vw;}
+    @media (max-width: 980px){
+      .topbar{flex-wrap:wrap;}
+      .search{flex:1 1 100%;max-width:none;order:3;}
+      .meta-chips{order:2;}
+
+    .iconbtn{
+      width:36px;height:36px;
+      border-radius:999px;
+      border:1px solid var(--hair);
+      background: color-mix(in srgb, var(--surface2) 92%, transparent);
+      display:inline-flex;align-items:center;justify-content:center;
+      cursor:pointer;
+      box-shadow: 0 1px 0 rgba(255,255,255,.20) inset;
+    }
+    .iconbtn:hover{filter:brightness(.98);}
+    .iconbtn span{font-size:14px;line-height:1;color:var(--muted);}
+    html[data-theme="dark"] .iconbtn .sun{display:none;}
+    html:not([data-theme="dark"]) .iconbtn .moon{display:none;}
+    }
+
+    .search{padding:10px 12px;}
+    .search-ico{
+      display:inline-flex;align-items:center;justify-content:center;
+      font-size:11px;line-height:1;
+      color:var(--muted);
+      border:1px solid var(--hair);
+      background:var(--surface2);
+      border-radius:10px;
+      padding:6px 8px;
+      white-space:nowrap;
+    }
+    .meta-chips{display:flex;gap:10px;align-items:center;flex:0 0 auto;}
+    .chip{padding:8px 10px;}
+    .tabs{display:flex;gap:6px;padding:6px;background:var(--surface);border:1px solid var(--hair);border-radius:999px;}
+    .tabs button{border:0;background:transparent;padding:8px 12px;border-radius:999px;color:var(--muted);font-size:12px;cursor:pointer;}
+    .tabs button.active{background:var(--surface2);color:var(--text);box-shadow: 0 1px 0 rgba(255,255,255,.25) inset;}
+    .search{flex:1 1 260px;display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);}
+    .search input{border:0;outline:0;background:transparent;color:var(--text);width:100%;font-size:13px;}
+    .search-label{color:var(--muted);font-size:12px;white-space:nowrap;flex:0 0 auto;}
+
+    /* Readability: loosen line-height + spacing */
+    .lead{line-height:1.7;}
+    .overview{line-height:1.7;}
+    .bullets{line-height:1.7;}
+    .overview-item{line-height:1.85;}
+    details.item[open]{margin:12px 0;}
+    .chip{font-size:12px;color:var(--muted);padding:8px 10px;border-radius:999px;border:1px solid var(--hair);background:var(--surface);white-space:nowrap;}
+
+    /* Hero */
+    .hero{padding:12px 0 22px;}
+    .eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);}
+    .hero h1{margin:10px 0 0;font-size:60px;line-height:1.0;letter-spacing:-0.045em;}
+    .hero p{margin:14px 0 0;max-width:72ch;color:var(--muted);font-size:16px;line-height:1.75;}
+    .hero .meta{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+    .pill{font-size:12px;color:var(--muted);padding:10px 12px;border-radius:999px;border:1px solid var(--hair);background:color-mix(in srgb, var(--surface) 92%, transparent);}
+    .pill strong{color:var(--text);font-weight:650;}
+
+    /* Layout */
+    .grid{display:grid;grid-template-columns: 1.35fr .65fr; gap:16px;}
+    @media (max-width: 980px){ .grid{grid-template-columns:1fr;} .hero h1{font-size:44px;} }
+
+    .card{background: color-mix(in srgb, var(--surface) 92%, transparent);
+      border:1px solid var(--hair);
+      border-radius: var(--r);
+      padding:18px;
+      box-shadow:none;
+    }
+    .card.elev{background: color-mix(in srgb, var(--surface2) 92%, transparent); box-shadow: var(--shadow);} 
+
+    h2{margin:0 0 10px;font-size:22px;letter-spacing:-0.02em;}
+    .lead{margin:0 0 14px;color:var(--muted);line-height:1.55;}
+
+    /* KPI */
+    .kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px;}
+    @media (max-width:560px){ .kpi{grid-template-columns:1fr;} }
+    .kpi .box{padding:14px;border-radius:16px;border:1px solid var(--hair);background:var(--surface2);} 
+    .kpi .n{font-size:24px;font-weight:650;letter-spacing:-0.02em;}
+    .kpi .t{margin-top:4px;font-size:12px;color:var(--muted);} 
+
+    /* Typography helpers */
+    .clamp2,.clamp3{
+      display:-webkit-box;
+      -webkit-box-orient:vertical;
+      overflow:hidden;
+    }
+    .clamp2{-webkit-line-clamp:2;}
+    .clamp3{-webkit-line-clamp:3;}
+
+    /* Lists + items */
+    ul{margin:0;padding:0;list-style:none;}
+    .overview-item{margin:12px 0;color:var(--muted);line-height:1.75;}
+
+    /* Numbering for readability */
+    #overview{counter-reset:ov;}
+    #overview > li{counter-increment:ov;}
+    #overview > li::before{
+      content: counter(ov) ". ";
+      color:var(--muted);
+      font-weight:650;
+    }
+
+    .section ul{counter-reset:item;}
+    .section ul > li{counter-increment:item;}
+    .section ul > li .title::before{
+      content: counter(item) ". ";
+      color:var(--muted);
+      font-weight:650;
+      margin-right:2px;
+    }
+
+    /* News item: default is compact; details reveal bullets */
+    details.item{border-radius:14px;}
+    details.item[open]{background: color-mix(in srgb, var(--surface2) 74%, transparent); padding:12px; margin:10px 0; border: 1px solid var(--hair);}
+    summary{list-style:none;cursor:pointer;outline:none;}
+    summary::-webkit-details-marker{display:none;}
+    .row{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;}
+    .title{font-size:15px;font-weight:650;letter-spacing:-0.01em;margin:0;}
+    .meta-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end;}
+    .badge{font-size:11px;padding:5px 10px;border-radius:999px;border:1px solid var(--hair);background:var(--surface2);color:var(--muted);} 
+    .btn{font-size:11px;padding:5px 10px;border-radius:999px;border:1px solid var(--hair);background:var(--surface2);color:var(--text);cursor:pointer;}
+    .btn:hover{filter:brightness(.98);} 
+    .overview{margin:6px 0 0;color:var(--muted);font-size:13px;line-height:1.55;}
+    .bullets{margin:10px 0 0 18px;color:var(--muted);font-size:13px;line-height:1.55;}
+
+    .case-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;}
+
+    /* Case breakdown (prettier) */
+    .case-title{margin:0;font-size:18px;font-weight:750;letter-spacing:-0.02em;line-height:1.25;}
+    .case-overview{margin:10px 0 0;color:var(--muted);font-size:13px;line-height:1.7;}
+    .case-meta{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;}
+    .case-layout{margin-top:12px;display:grid;grid-template-columns:1.25fr .75fr;gap:12px;}
+    @media (max-width: 980px){.case-layout{grid-template-columns:1fr;}}
+    .case-card{border-radius:16px;border:1px solid var(--hair);background:color-mix(in srgb, var(--surface2) 92%, transparent);padding:14px;}
+    .case-card-h{font-size:12px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
+    .case-steps{margin:12px 0 0;padding-left:18px;color:var(--text);}
+    .case-steps li{margin:10px 0;color:color-mix(in srgb, var(--text) 88%, var(--muted));line-height:1.7;}
+    .case-bullets{margin:12px 0 0 18px;color:var(--muted);line-height:1.7;}
+    .case-bullets li{margin:10px 0;}
+    .case-stack{display:flex;flex-direction:column;gap:12px;}
+    .case-metrics{margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;}
+    .case-metrics .pill{padding:8px 10px;}
+
+    @media (max-width: 980px){.case-grid{grid-template-columns:1fr;}}
+
+
+    .section{margin-top:18px;}
+
+    /* Module color accents (subtle, Apple-like) */
+    :root{
+      --c-recruiting:#0a84ff;
+      --c-employee:#34c759;
+      --c-payroll:#ff9f0a;
+      --c-org:#af52de;
+      --c-invest:#ff2d55;
+      --c-case:#00c7be;
+      --c-reading:#5ac8fa;
+    }
+
+    /* Make section titles more prominent */
+    .section h2{font-size:26px; font-weight:750; letter-spacing:-0.025em;}
+    .section .lead{font-size:14px;}
+
+    /* Accent strip + soft tint per module */
+    .section[data-section] .card{position:relative; overflow:hidden;}
+    .section[data-section] .card::before{
+      content:"";
+      position:absolute;
+      left:0; top:0; bottom:0;
+      width:6px;
+      background:var(--module, var(--accent));
+      opacity:.85;
+    }
+    .section[data-section] .card::after{
+      content:"";
+      position:absolute;
+      left:0; right:0; top:0;
+      height:92px;
+      background:linear-gradient(90deg, color-mix(in srgb, var(--module, var(--accent)) 12%, transparent), transparent 62%);
+      pointer-events:none;
+    }
+    .section[data-section] h2::before{
+      content:"";
+      display:inline-block;
+      width:10px; height:10px;
+      margin-right:10px;
+      border-radius:999px;
+      background:var(--module, var(--accent));
+      box-shadow:0 0 0 4px color-mix(in srgb, var(--module, var(--accent)) 14%, transparent);
+      transform:translateY(-1px);
+    }
+
+    .section#recruiting{--module:var(--c-recruiting);} 
+    .section#employee{--module:var(--c-employee);} 
+    .section#payroll{--module:var(--c-payroll);} 
+    .section#org{--module:var(--c-org);} 
+    .section#invest{--module:var(--c-invest);} 
+    .card#case{--module:var(--c-case);} 
+    .card#reading{--module:var(--c-reading);} 
+
+    /* Color the tags a bit (still restrained) */
+    .section[data-section] .badge{
+      border-color: color-mix(in srgb, var(--module) 28%, var(--hair));
+      background: color-mix(in srgb, var(--module) 10%, var(--surface2));
+      color: color-mix(in srgb, var(--text) 86%, var(--module));
+    }
+
+    /* Avoid monochrome pills */
+    .pill{
+      background:linear-gradient(180deg, color-mix(in srgb, var(--accent) 10%, var(--surface2)), var(--surface2));
+    }
+
+
+    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:6px;}
+    .section-head .right{display:flex;gap:8px;align-items:center;}
+    .hint{font-size:12px;color:var(--muted);white-space:nowrap;}
+
+    /* Comfort spacing: reduce density inside modules */
+    .card{padding:22px;}
+    .card.elev{padding:24px;}
+    .section{margin-top:24px;}
+    ul > li{margin:12px 0;}
+    details.item{display:block;}
+    details.item summary{padding:10px 10px;}
+    details.item[open]{padding:14px; margin:14px 0;}
+    .row{gap:16px;}
+    .meta-row{gap:10px;}
+    .bullets{margin-top:12px;}
+
+    footer{margin-top:34px;padding-top:18px;border-top:1px solid var(--hair);color:var(--muted);font-size:12px;}
+
+    @media (prefers-reduced-motion: no-preference){
+      details.item{transition: background-color .18s ease, padding .18s ease, border-color .18s ease;}
+      .tabs button{transition: background-color .18s ease, color .18s ease;}
+    }
+  </style>
+</head>
+<body>
+
+  
+  <div class="subnav">
+    <div class="subnav-inner">
+      <a class="back" href="index.html">← 返回首页</a>
+
+      <div class="picker">
+        <label for="sectionPicker">模块</label>
+        <select id="sectionPicker" aria-label="选择模块">
+          <option value="all">全部</option>
+          <option value="recruiting">招聘与寻才</option>
+          <option value="employee">员工服务 / 共享服务</option>
+          <option value="payroll">薪酬社保 / 发薪 / 合规</option>
+          <option value="org">组织与学习 / 绩效</option>
+          <option value="invest">投资与新产品</option>
+          <option value="case">案例拆解</option>
+          <option value="reading">延伸阅读 / 视频 / 报告</option>
+        </select>
+      </div>
+
+      <div class="sub-actions">
+        <button class="iconbtn" id="themeToggle" title="切换日/夜模式" aria-label="切换日/夜模式"><span class="sun" aria-hidden="true">☀︎</span><span class="moon" aria-hidden="true">☾</span></button>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="hero">
+      <div class="eyebrow">Workforce · HR Tech · AI</div>
+      <h1>AI × HR 早报</h1>
+      <p>每天下午 13:20 自动更新 · 聚焦 AI 在人力资源行业的落地与投资/新产品动态（近 7 天重要信息）。</p>
+      <div class="meta">
+        <span class="pill">更新节奏：<strong>每日 13:20</strong></span>
+        <span class="pill">时间范围：<strong>近 7 天</strong></span>
+        <span class="pill">看板文件：<strong>~/clawd/ai-news</strong></span>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card elev">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">✨ 今日概览</h2>
+            <p class="lead" style="margin:8px 0 0;">先看 3 条。需要更多再展开。</p>
+          </div>
+          <div class="right">
+            <button class="btn" data-more="overview">查看全部</button>
+          </div>
+        </div>
+        <ul id="overview">
+          <!-- slot:overview:start -->
+<li class="overview-item" data-title="员工自助服务的“上下文 HR Copilot”开始下沉到员工端：PayFit 将 Copilot 向平台员工开放，主打在薪资/假期/合同等敏感问题上提供“基于个人情境”的答案，并把咨询留在系统内以降低隐私风险。" data-tags="overview"><strong>员工自助服务的“上下文 HR Copilot”开始下沉到员工端</strong>：PayFit 将 Copilot 向平台员工开放，主打在薪资/假期/合同等敏感问题上提供“基于个人情境”的答案，并把咨询留在系统内以降低隐私风险。</li>
+<li class="overview-item" data-title="招聘侧的 AI 关键词需求在整体招聘偏弱背景下逆势增长：Indeed 数据显示，岗位描述中 AI 相关词汇占比上升；HR 岗位的 AI 提及占比在 2025 年内从约 4.4% 升至约 8.8%（12 月）。" data-tags="overview"><strong>招聘侧的 AI 关键词需求在整体招聘偏弱背景下逆势增长</strong>：Indeed 数据显示，岗位描述中 AI 相关词汇占比上升；HR 岗位的 AI 提及占比在 2025 年内从约 4.4% 升至约 8.8%（12 月）。</li>
+<li class="overview-item" data-title="求职与招聘的“噪声”在上升：简历/申请被 AI 放大：HR Dive 指出，AI 让求职者更容易“对齐 JD”，也带来机器人投递与虚假候选人，反而提高了筛选与面试环节的验证成本。" data-tags="overview"><strong>求职与招聘的“噪声”在上升：简历/申请被 AI 放大</strong>：HR Dive 指出，AI 让求职者更容易“对齐 JD”，也带来机器人投递与虚假候选人，反而提高了筛选与面试环节的验证成本。</li>
+<li class="overview-item" data-title="AI 招聘合规压力持续升温，审计与可解释成为必答题：Forbes 结合诉讼与研究指出，黑盒筛选在缩量招聘周期下更易暴露偏差与责任归属问题，建议建立人审节点与偏差审计。" data-tags="overview"><strong>AI 招聘合规压力持续升温，审计与可解释成为必答题</strong>：Forbes 结合诉讼与研究指出，黑盒筛选在缩量招聘周期下更易暴露偏差与责任归属问题，建议建立人审节点与偏差审计。</li>
+<!-- slot:overview:end -->
+        </ul>
+
+        <div class="kpi">
+          <div class="box"><div class="n" id="kpi-recruiting">6</div><div class="t">招聘</div></div>
+          <div class="box"><div class="n" id="kpi-invest">5</div><div class="t">投资/新产品</div></div>
+          <div class="box"><div class="n" id="kpi-total">22</div><div class="t">总条目</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>🗓 最近记录</h2>
+        <p class="lead">每天一份 Markdown 归档（最多 30 条）。</p>
+        <ul id="recent">
+          <!-- slot:recent:start -->
+<li data-title="2026-01-28" data-tags="recent"><a class="badge" href="archive/2026-01-28.md" target="_blank" rel="noopener noreferrer">2026-01-28</a></li>
+<!-- slot:recent:end -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="recruiting" data-section="recruiting">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">🧲 招聘与寻才</h2>
+            <p class="lead" style="margin:8px 0 0;">ATS、简历解析、结构化面试、寻才与内部流动。</p>
+          </div>
+          <div class="right"><span class="hint">默认展示 3 条</span><button class="btn" data-more="recruiting">查看更多</button></div>
+        </div>
+        <ul id="recruiting">
+          <!-- slot:recruiting:start -->
+<li data-title="Indeed：招聘偏弱，但“提及 AI 的岗位”仍在增长，HR 也在跟进" data-tags="Global #招聘 #数据洞察 #技能"><details class="item"><summary>  <div class="row">    <p class="title">Indeed：招聘偏弱，但“提及 AI 的岗位”仍在增长，HR 也在跟进</p>    <div class="meta-row"><span class="badge">Global #招聘 #数据洞察 #技能</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.hiringlab.org/2026/01/22/january-labor-market-update-jobs-mentioning-ai-are-growing-amid-broader-hiring-weakness/">来源</a></div>  </div>  <p class="overview">Indeed Hiring Lab 月度更新显示，AI 相关词汇在岗位描述中的占比继续攀升，呈现“整体招聘降温 vs AI 技能需求升温”的分化。</p></summary><ul class="bullets"><li>Indeed AI Tracker 在 2025 年 12 月达到约 **4.2%**（岗位中出现 AI 相关关键词的占比）。</li><li>多个知识工作领域出现分化：含 AI 关键词的岗位上升，而总体岗位不一定上升。</li><li>文中指出 HR 岗位 AI 提及占比在 2025 年内从约 **4.4%→8.8%**（12 月）。</li></ul></details></li>
+<li data-title="LinkedIn：推出 AI 驱动的“自然语言找工作”指引（更强调意图理解）" data-tags="Global #招聘 #求职体验 #产品"><details class="item"><summary>  <div class="row">    <p class="title">LinkedIn：推出 AI 驱动的“自然语言找工作”指引（更强调意图理解）</p>    <div class="meta-row"><span class="badge">Global #招聘 #求职体验 #产品</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/help/linkedin/answer/a6889044">来源</a></div>  </div>  <p class="overview">LinkedIn Help 页面更新阐述 AI Job Search 的使用方式：允许求职者用自然语言描述目标岗位，由 LLM 解析意图并匹配职位。</p></summary><ul class="bullets"><li>支持“像跟朋友说一样”的描述式搜索，并建议加入地点/时间（如“过去一周”）等细节。</li><li>系统用 LLM（结合 LinkedIn 数据）分析职位描述与搜索意图，提升匹配相关性。</li><li>仍处于逐步开放阶段，且当前不支持“排除某类岗位”等反向条件。</li></ul></details></li>
+<li data-title="LinkedIn：上线“AI 技能验证/证书”与求职 Job Tracker（技能优先信号更强）" data-tags="Global #招聘 #技能认证 #产品"><details class="item"><summary>  <div class="row">    <p class="title">LinkedIn：上线“AI 技能验证/证书”与求职 Job Tracker（技能优先信号更强）</p>    <div class="meta-row"><span class="badge">Global #招聘 #技能认证 #产品</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://mexicobusiness.news/talent/news/linkedin-adds-ai-skill-verification-job-search-tools">来源</a></div>  </div>  <p class="overview">报道称 LinkedIn 与多家 AI 工具合作，提供基于实际使用/产出表现的技能验证，并推出求职跟踪器集中管理投递与人脉。</p></summary><ul class="bullets"><li>合作伙伴包括 Descript、Lovable、Relay.app、Replit 等，用户可将证书展示在 LinkedIn 个人资料。</li><li>目标是减少“自我声明技能”的噪声，让招聘方看到更可验证的信号。</li><li>Job Tracker 提供记录机会、备注、识别可引荐联系人等功能，提升求职流程管理效率。</li></ul></details></li>
+<li data-title="HR Dive：2026 招聘更“精确”，但 AI 让投递量/虚假申请与筛选难度同步上升" data-tags="Global #招聘 #面试评估 #趋势"><details class="item"><summary>  <div class="row">    <p class="title">HR Dive：2026 招聘更“精确”，但 AI 让投递量/虚假申请与筛选难度同步上升</p>    <div class="meta-row"><span class="badge">Global #招聘 #面试评估 #趋势</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.hrdive.com/news/hiring-2026-trends-recruiting-acquisition-skills/810551/">来源</a></div>  </div>  <p class="overview">HR Dive 采访指出，在雇主更谨慎、强调关键技能的背景下，AI 使简历更容易“贴合 JD”，也带来机器人投递与虚假申请，提高招聘工作量。</p></summary><ul class="bullets"><li>招聘更“聚焦”：企业倾向只招“绝对需要”的岗位，围绕数字化与转型能力补位。</li><li>噪声上升：机器人投递、假候选人、AI 生成简历可能影响筛选准确性。</li><li>线下面试与行为面试的重要性上升，用于验证真实能力与动机。</li></ul></details></li>
+<li data-title="Forbes：缩量招聘周期叠加 AI 初筛，招聘系统将被“压力测试”（偏差/责任/审计）" data-tags="Global #招聘 #合规风控 #可解释性"><details class="item"><summary>  <div class="row">    <p class="title">Forbes：缩量招聘周期叠加 AI 初筛，招聘系统将被“压力测试”（偏差/责任/审计）</p>    <div class="meta-row"><span class="badge">Global #招聘 #合规风控 #可解释性</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.forbes.com/sites/sheilacallaham/2026/01/25/why-hiring-systems-will-be-stress-tested-in-2026/">来源</a></div>  </div>  <p class="overview">文章指出当招聘放缓、岗位更少、申请更多时，AI 早期筛选的影响被放大，且更容易暴露偏差与可解释性问题。</p></summary><ul class="bullets"><li>诉讼与监管关注使“AI 筛选的责任归属”更敏感，组织需要更明确的治理与人审节点。</li><li>历史数据训练导致“复制旧偏好”，即使移除显式敏感字段也可能通过代理特征推断人口统计信息。</li><li>建议建立偏差审计、关键节点人审、以及可追溯的筛选逻辑与记录。</li></ul></details></li>
+<li data-title="国内招聘平台竞争聚焦“岗位真实性 + AI 匹配精度”（舆论侧的用户心智）" data-tags="CN #招聘 #渠道 #产品体验"><details class="item"><summary>  <div class="row">    <p class="title">国内招聘平台竞争聚焦“岗位真实性 + AI 匹配精度”（舆论侧的用户心智）</p>    <div class="meta-row"><span class="badge">CN #招聘 #渠道 #产品体验</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://finance.sina.com.cn/tech/roll/2026-01-25/doc-inhiprmp9904628.shtml">来源</a></div>  </div>  <p class="overview">中文媒体文章以榜单形式讨论国内招聘平台，强调“AI 匹配”“真实性核验”“直聊响应”等指标对求职体验的影响。</p></summary><ul class="bullets"><li>提到多重核验、虚假岗位投诉率、AI 匹配准确率等指标被用于营销与对比。</li><li>反映用户对“岗位真实性”“沟通效率”“算法推荐质量”的强关注。</li><li>对企业侧启示：招聘渠道选择与雇主品牌内容投放更需要适配平台算法与交互机制。</li></ul></details></li>
+<!-- slot:recruiting:end -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="employee" data-section="employee">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">🧾 员工服务 / 共享服务 / 知识库</h2>
+            <p class="lead" style="margin:8px 0 0;">问答→工单→流程执行→知识回流的闭环。</p>
+          </div>
+          <div class="right"><button class="btn" data-more="employee">查看更多</button></div>
+        </div>
+        <ul id="employee">
+          <!-- slot:employee:start -->
+<li data-title="PayFit：将“上下文 HR/Payroll Copilot”开放给员工端（在系统内答薪资/假期/合同）" data-tags="Global #员工服务 #共享服务 #知识库"><details class="item"><summary>  <div class="row">    <p class="title">PayFit：将“上下文 HR/Payroll Copilot”开放给员工端（在系统内答薪资/假期/合同）</p>    <div class="meta-row"><span class="badge">Global #员工服务 #共享服务 #知识库</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://itbrief.asia/story/payfit-rolls-out-contextual-hr-ai-copilot-to-staff">来源</a></div>  </div>  <p class="overview">PayFit 宣布将 PayFit Copilot 向平台员工开放，提供基于个人情境的 HR 与薪资问答，并强调数据保密与减少 HR 重复咨询。</p></summary><ul class="bullets"><li>覆盖问题：合同条款、工资单（payslip）、休假余额等。</li><li>以“上下文”生成答案：合同类型、法规更新、司龄、假期余额、工资单信息、适用协议等。</li><li>知识底座：1000+ 帮助中心文章，由 200+ 薪资专家维护；复杂场景仍转人工。</li></ul></details></li>
+<li data-title="Josh Bersin：HR 将从“助手”走向“代理/超级代理”，员工服务是高优先级场景" data-tags="Global #员工服务 #共享服务 #趋势"><details class="item"><summary>  <div class="row">    <p class="title">Josh Bersin：HR 将从“助手”走向“代理/超级代理”，员工服务是高优先级场景</p>    <div class="meta-row"><span class="badge">Global #员工服务 #共享服务 #趋势</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.prnewswire.com/news-releases/in-2026-ai-powered-superagents-will-radically-change-hr-driving-the-largest-hr-transformation-in-decades-302666677.html">来源</a></div>  </div>  <p class="overview">Bersin 团队提出“HR superagents”概念，认为 AI 将从回答问题走向自动化核心 HR 流程（员工服务、招聘、绩效、学习等）。</p></summary><ul class="bullets"><li>报告称识别出 100+ HR agent 应用，并按“超级代理家族”聚合。</li><li>建议打造统一 AI 架构，避免“100 个供应商 100 个代理”的失控。</li><li>强调 HR 与 IT 协同、数据治理、以及“以员工关怀/信任为中心”的落地原则。</li></ul></details></li>
+<!-- slot:employee:end -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="payroll" data-section="payroll">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">🧷 薪酬社保 / 发薪 / 合规</h2>
+            <p class="lead" style="margin:8px 0 0;">权限、审计、留存：规模化落地的硬门槛。</p>
+          </div>
+          <div class="right"><button class="btn" data-more="payroll">查看更多</button></div>
+        </div>
+        <ul id="payroll">
+          <!-- slot:payroll:start -->
+<li data-title="PayFit：把薪资/假期/合同类问题留在系统内，降低隐私与误答风险" data-tags="Global #发薪 #合规风控 #隐私"><details class="item"><summary>  <div class="row">    <p class="title">PayFit：把薪资/假期/合同类问题留在系统内，降低隐私与误答风险</p>    <div class="meta-row"><span class="badge">Global #发薪 #合规风控 #隐私</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://itbrief.asia/story/payfit-rolls-out-contextual-hr-ai-copilot-to-staff">来源</a></div>  </div>  <p class="overview">PayFit 解释将 Copilot 扩展到员工端的动机之一，是应对员工使用公共 AI 工具/搜索引擎咨询薪资问题带来的隐私与准确性风险。</p></summary><ul class="bullets"><li>公开 AI 工具可能给出与个人合同/政策不匹配的“泛化答案”。</li><li>员工在外部工具输入个人财务/雇佣信息存在保密隐患。</li><li>通过“授权数据范围”与“上下文知识库”提高可信度，并把复杂问题回流 HR。</li></ul></details></li>
+<li data-title="ADP NER Pulse：用高频就业数据做用工趋势监测（HR 规划参考）" data-tags="Global #用工数据 #规划 #风控"><details class="item"><summary>  <div class="row">    <p class="title">ADP NER Pulse：用高频就业数据做用工趋势监测（HR 规划参考）</p>    <div class="meta-row"><span class="badge">Global #用工数据 #规划 #风控</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.prnewswire.com/news-releases/adp-national-employment-report-preliminary-estimate-for-january-3-2026-302670520.html">来源</a></div>  </div>  <p class="overview">ADP 发布每周 NER Pulse，提供美国私营就业变化的高频估计，可作为宏观用工趋势的辅助指标。</p></summary><ul class="bullets"><li>截至 2026-01-03 的四周移动平均：私营雇主周均新增约 **7,750**。</li><li>数据为季节调整并滞后两周，以提高完整性与准确性。</li><li>适合与企业内部招聘节奏、offer 接受率、离职率联动做趋势对照。</li></ul></details></li>
+<!-- slot:payroll:end -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="org" data-section="org">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">🧠 组织与学习 / 绩效</h2>
+            <p class="lead" style="margin:8px 0 0;">技能标签、学习路径、内部流动与人才盘点。</p>
+          </div>
+          <div class="right"><button class="btn" data-more="org">查看更多</button></div>
+        </div>
+        <ul id="org">
+          <!-- slot:org:start -->
+<li data-title="HR Dive：技能缺口是“AI 时代的硬约束”，企业更重视内部 upskilling" data-tags="Global #学习发展 #技能 #组织能力"><details class="item"><summary>  <div class="row">    <p class="title">HR Dive：技能缺口是“AI 时代的硬约束”，企业更重视内部 upskilling</p>    <div class="meta-row"><span class="badge">Global #学习发展 #技能 #组织能力</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.hrdive.com/news/hiring-2026-trends-recruiting-acquisition-skills/810551/">来源</a></div>  </div>  <p class="overview">HR Dive 指出企业想要 AI/数字化相关能力，但“没人 Day 1 就具备全部新技能”，因此更依赖内部培养与岗位内成长。</p></summary><ul class="bullets"><li>企业在成本约束下更“定点溢价”：只对少数关键技能支付溢价。</li><li>upskilling 变得更务实：把员工从“未被挑战的岗位”转到需要技能提升的项目/角色。</li><li>对 L&amp;D 的要求从“课程供给”转向“技能到业务产出”的路径设计。</li></ul></details></li>
+<li data-title="Josh Bersin：L&amp;D 可被大量自动化，组织需要从课程转向“持续、个性化、生成式学习”" data-tags="Global #学习发展 #绩效 #趋势"><details class="item"><summary>  <div class="row">    <p class="title">Josh Bersin：L&amp;D 可被大量自动化，组织需要从课程转向“持续、个性化、生成式学习”</p>    <div class="meta-row"><span class="badge">Global #学习发展 #绩效 #趋势</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.prnewswire.com/news-releases/in-2026-ai-powered-superagents-will-radically-change-hr-driving-the-largest-hr-transformation-in-decades-302666677.html">来源</a></div>  </div>  <p class="overview">Bersin 观点强调学习与发展流程中大量工作可被自动化，组织应建立更动态的学习与知识体系。</p></summary><ul class="bullets"><li>提出 L&amp;D 中 60–70% 的工作有被自动化的潜力（报告观点）。</li><li>学习从“课程库”走向“按角色/任务动态生成的学习与辅导”。</li><li>需要配套：内容治理、效果评估、数据质量与合规边界。</li></ul></details></li>
+<li data-title="IBM：2026 趋势强调“智能体编排/系统能力”，而不仅是单一模型（对 HR 数字化同样适用）" data-tags="CN #组织与数字化 #智能体 #趋势"><details class="item"><summary>  <div class="row">    <p class="title">IBM：2026 趋势强调“智能体编排/系统能力”，而不仅是单一模型（对 HR 数字化同样适用）</p>    <div class="meta-row"><span class="badge">CN #组织与数字化 #智能体 #趋势</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.ibm.com/cn-zh/think/news/ai-tech-trends-predictions-2026">来源</a></div>  </div>  <p class="overview">IBM 对 2026 的趋势判断强调，竞争焦点从“哪个模型更强”转向“系统如何编排模型、工具与工作流”。</p></summary><ul class="bullets"><li>强调编排与路由：用更小模型处理大多数任务，必要时再路由到更大模型。</li><li>多智能体系统与通信协议（如 MCP 等）将加速从实验走向落地。</li><li>对 HR 场景的启示：员工服务、知识库、流程审批的“系统级闭环”更重要。</li></ul></details></li>
+<!-- slot:org:end -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="section" id="invest" data-section="invest">
+      <div class="card">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">🚀 投资与新产品</h2>
+            <p class="lead" style="margin:8px 0 0;">融资/新品发布/YC/加速器/新开源工具。</p>
+          </div>
+          <div class="right"><button class="btn" data-more="invest">查看更多</button></div>
+        </div>
+        <ul id="invest">
+          <!-- slot:invest:start -->
+<li data-title="PayFit：Copilot 从 HR/管理端扩展到员工端（产品“自助化”升级）" data-tags="Global #新产品 #员工服务 #薪资"><details class="item"><summary>  <div class="row">    <p class="title">PayFit：Copilot 从 HR/管理端扩展到员工端（产品“自助化”升级）</p>    <div class="meta-row"><span class="badge">Global #新产品 #员工服务 #薪资</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://itbrief.asia/story/payfit-rolls-out-contextual-hr-ai-copilot-to-staff">来源</a></div>  </div>  <p class="overview">PayFit 将 Copilot 下沉到员工端，体现 HR Tech 从“给 HR 用”转向“给全员用”的自助服务升级。</p></summary><ul class="bullets"><li>目标人群扩展：覆盖到平台上约 220,000 名员工用户（报道口径）。</li><li>强调可信与合规：以“授权数据 + 上下文 + 专家维护知识库”作为可信答案来源。</li><li>将 HR 从重复问答中释放，聚焦复杂与敏感事件处理。</li></ul></details></li>
+<li data-title="LinkedIn：AI Job Search 指引完善（产品持续全球化扩展）" data-tags="Global #新产品 #招聘 #搜索"><details class="item"><summary>  <div class="row">    <p class="title">LinkedIn：AI Job Search 指引完善（产品持续全球化扩展）</p>    <div class="meta-row"><span class="badge">Global #新产品 #招聘 #搜索</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.linkedin.com/help/linkedin/answer/a6889044">来源</a></div>  </div>  <p class="overview">LinkedIn 以帮助中心形式明确 AI Job Search 的交互逻辑与限制，说明该能力在逐步开放与迭代。</p></summary><ul class="bullets"><li>强调意图理解与“扩大你未必想到的岗位”发现。</li><li>建议用“时间/地点/过滤条件”提升匹配质量。</li><li>通过 member 数据（如偏好/搜索活动）调整排序，偏向个性化分发。</li></ul></details></li>
+<li data-title="LinkedIn：技能验证合作（从“自报技能”到“可验证技能”）" data-tags="Global #新产品 #技能 #招聘"><details class="item"><summary>  <div class="row">    <p class="title">LinkedIn：技能验证合作（从“自报技能”到“可验证技能”）</p>    <div class="meta-row"><span class="badge">Global #新产品 #技能 #招聘</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://mexicobusiness.news/talent/news/linkedin-adds-ai-skill-verification-job-search-tools">来源</a></div>  </div>  <p class="overview">LinkedIn 推出与 AI 工具厂商合作的技能验证机制，为招聘端提供更强信号。</p></summary><ul class="bullets"><li>通过合作伙伴基于使用/产出/表现评估，发放可展示的证书。</li><li>预告更多合作伙伴将加入，扩展到更多工具生态。</li><li>对企业侧：可用于建立“技能优先”的筛选规则与候选人对话框架。</li></ul></details></li>
+<li data-title="Josh Bersin：把研究与基准工具内置到 Galileo AI HR agent（“研究即产品”）" data-tags="Global #新产品 #HR科技 #研究平台"><details class="item"><summary>  <div class="row">    <p class="title">Josh Bersin：把研究与基准工具内置到 Galileo AI HR agent（“研究即产品”）</p>    <div class="meta-row"><span class="badge">Global #新产品 #HR科技 #研究平台</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.prnewswire.com/news-releases/in-2026-ai-powered-superagents-will-radically-change-hr-driving-the-largest-hr-transformation-in-decades-302666677.html">来源</a></div>  </div>  <p class="overview">Bersin 将研究成果与 benchmarking 工具嵌入 Galileo AI HR agent，试图把“静态报告”变为可交互、可定制的决策支持。</p></summary><ul class="bullets"><li>将“superagents/imperatives”等框架与工具整合到平台中。</li><li>强调可持续更新与交互式问答，而非一次性 PDF。</li><li>对 HR 决策：更像“随时可问的研究与对标助手”。</li></ul></details></li>
+<li data-title="TechStartups 汇总：大模型与基础设施投资继续加速（影响企业 AI 成本与供给）" data-tags="Global #投资 #AI基础设施 #趋势"><details class="item"><summary>  <div class="row">    <p class="title">TechStartups 汇总：大模型与基础设施投资继续加速（影响企业 AI 成本与供给）</p>    <div class="meta-row"><span class="badge">Global #投资 #AI基础设施 #趋势</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://techstartups.com/2026/01/26/top-tech-news-today-january-26-2026/">来源</a></div>  </div>  <p class="overview">TechStartups 盘点的新闻中提到数据中心/AI 基建投入与大厂 AI 助手路线的变化，间接影响企业侧 AI 预算与供应链。</p></summary><ul class="bullets"><li>AI 供给端瓶颈从“模型”转向“电力/机房/算力规模”。</li><li>大厂通过投资与合作绑定生态，有可能影响企业客户议价与采购策略。</li><li>对 HR 场景：AI 预算与部署节奏将更多受 IT/基础设施影响（而不只是 HR 需求）。</li></ul></details></li>
+<!-- slot:invest:end -->
+        </ul>
+      </div>
+    </div>
+
+    <div class="grid" style="margin-top:16px;">
+      <div class="card" id="case" data-section="case">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">🧩 案例拆解（1个）</h2>
+            <p class="lead" style="margin:8px 0 0;">默认折叠阅读，保留行动步骤与指标。</p>
+          </div>
+        </div>
+        <div id="case">
+          <!-- slot:case:start -->
+<div class="case">
+  <div class="case-head">
+    <p class="case-title">PayFit Copilot 员工端落地：把“HR/Payroll 问答”做成上下文自助服务（并留痕可控）</p>
+    <p class="case-overview">PayFit 把 Copilot 扩展到员工端，解决“高频重复咨询 + 薪资问题敏感 + 外部 AI 不可信/不合规”的组合痛点。</p>
+    <div class="case-meta">
+      <span class="badge">Global #案例 #员工服务 #薪资 #知识库</span>
+      <a class="badge" target="_blank" rel="noopener noreferrer" href="https://itbrief.asia/story/payfit-rolls-out-contextual-hr-ai-copilot-to-staff">来源</a>
+    </div>
+  </div>
+  <div class="case-layout">
+    <div class="case-stack">
+    </div>
+  </div>
+</div>
+<!-- slot:case:end -->
+        </div>
+      </div>
+      <div class="card" id="reading" data-section="reading">
+        <div class="section-head">
+          <div>
+            <h2 style="margin:0;">📚 延伸阅读 / 视频 / 报告</h2>
+            <p class="lead" style="margin:8px 0 0;">只放最值得点开的 3–6 条。</p>
+          </div>
+          <div class="right"><button class="btn" data-more="reading">查看更多</button></div>
+        </div>
+        <ul id="reading">
+          <!-- slot:reading:start -->
+<li data-title="Indeed Labor Market Update（含 Chartbook）：用数据追踪“AI 技能渗透率”" data-tags="Global #报告 #数据 #招聘"><details class="item"><summary>  <div class="row">    <p class="title">Indeed Labor Market Update（含 Chartbook）：用数据追踪“AI 技能渗透率”</p>    <div class="meta-row"><span class="badge">Global #报告 #数据 #招聘</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.hiringlab.org/2026/01/22/january-labor-market-update-jobs-mentioning-ai-are-growing-amid-broader-hiring-weakness/">来源</a></div>  </div>  <p class="overview">提供月度趋势解读与图表册，适合用于 HR/TA 内部汇报与对标。</p></summary><ul class="bullets"><li>关注 Indeed AI Tracker 与职业组（含 HR）对比。</li><li>可用于论证“技能优先招聘 + 内部培养”的投入必要性。</li><li>Chartbook 适合直接引用到经营/人力盘点材料。</li></ul></details></li>
+<li data-title="Forbes：AI 招聘筛选的偏差/可解释性与责任归属（合规视角）" data-tags="Global #报告 #合规 #招聘"><details class="item"><summary>  <div class="row">    <p class="title">Forbes：AI 招聘筛选的偏差/可解释性与责任归属（合规视角）</p>    <div class="meta-row"><span class="badge">Global #报告 #合规 #招聘</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.forbes.com/sites/sheilacallaham/2026/01/25/why-hiring-systems-will-be-stress-tested-in-2026/">来源</a></div>  </div>  <p class="overview">围绕缩量招聘背景下的 AI 初筛风险，提供审计、人审节点等治理建议。</p></summary><ul class="bullets"><li>强调“早期筛选”比终面更决定“谁被看见”。</li><li>指出代理特征导致的间接偏差风险。</li><li>适合 HR 与法务/合规做共识材料。</li></ul></details></li>
+<li data-title="HR Dive：2026 招聘趋势（精确招聘、AI 噪声与技能缺口）" data-tags="Global #报告 #招聘 #技能"><details class="item"><summary>  <div class="row">    <p class="title">HR Dive：2026 招聘趋势（精确招聘、AI 噪声与技能缺口）</p>    <div class="meta-row"><span class="badge">Global #报告 #招聘 #技能</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.hrdive.com/news/hiring-2026-trends-recruiting-acquisition-skills/810551/">来源</a></div>  </div>  <p class="overview">从雇主市场、申请量上升、AI 简历与虚假申请等角度总结 2026 招聘难点。</p></summary><ul class="bullets"><li>精确招聘 vs 成本约束</li><li>面试验证重要性上升</li><li>内部 upskilling 成为关键应对</li></ul></details></li>
+<li data-title="IBM：2026 AI 与智能体趋势（编排、协议、多智能体系统）" data-tags="CN #报告 #智能体 #治理"><details class="item"><summary>  <div class="row">    <p class="title">IBM：2026 AI 与智能体趋势（编排、协议、多智能体系统）</p>    <div class="meta-row"><span class="badge">CN #报告 #智能体 #治理</span><a class="badge" target="_blank" rel="noopener noreferrer" href="https://www.ibm.com/cn-zh/think/news/ai-tech-trends-predictions-2026">来源</a></div>  </div>  <p class="overview">从系统/编排/协议视角看 AI 落地，对 HR 数字化“端到端流程”建设有参考价值。</p></summary><ul class="bullets"><li>编排与路由思路（小模型+大模型）</li><li>MCP 等协议推动工具互联</li><li>强调信任与安全</li></ul></details></li>
+<!-- slot:reading:end -->
+        </ul>
+      </div>
+    </div>
+
+    <footer>
+      来源链接将以新标签页打开（不打断你浏览看板）。
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const seg = document.querySelector('.tabs');
+      const q = document.getElementById('q');
+      let mode = 'all';
+
+      // Level-2 pages may not have the old tabs/search controls anymore.
+      // Avoid crashing this script, which would prevent section switching.
+      if(!seg && !q){
+        // still clamp and apply default limits if the functions exist later
+      }
+
+      const DEFAULT_LIMIT = 3;
+      const expanded = new Set();
+
+      function clampDetails(){
+        // limit summary overview lines for all items
+        document.querySelectorAll('p.overview').forEach(p=>p.classList.add('clamp2'));
+      }
+
+      function applyLimits(){
+        const lists = ['overview','recruiting','employee','payroll','org','invest','reading'];
+        lists.forEach(id=>{
+          const list = document.getElementById(id);
+          if(!list) return;
+          const items = [...list.querySelectorAll(':scope > li[data-title], :scope > li.overview-item[data-title]')];
+          const isExpanded = expanded.has(id);
+          items.forEach((li, idx)=>{
+            li.dataset.idx = String(idx);
+            const beyond = idx >= DEFAULT_LIMIT;
+            li.dataset.beyond = beyond ? '1' : '0';
+            li.style.display = (!isExpanded && beyond) ? 'none' : '';
+          });
+        });
+      }
+
+      function setMode(next){
+        mode = next;
+        [...(seg?seg.querySelectorAll.bind(seg):(()=>[]))('button')].forEach(b=>b.classList.toggle('active', b.dataset.filter===next));
+        apply();
+        if(next !== 'all'){
+          const el = document.querySelector(`[data-section="${next}"]`);
+          if(el) el.scrollIntoView({behavior:'smooth', block:'start'});
+        }
+      }
+
+      function apply(){
+        const query = (q.value||'').trim().toLowerCase();
+        const ids = ['recruiting','employee','payroll','org','invest','reading','overview'];
+
+        ids.forEach(id=>{
+          const list = document.getElementById(id);
+          if(!list) return;
+          const items = [...list.querySelectorAll('[data-title]')];
+          let shown = 0;
+          items.forEach(el=>{
+            const t = (el.dataset.title||'').toLowerCase();
+            const tags = (el.dataset.tags||'').toLowerCase();
+            const okQuery = !query || t.includes(query) || tags.includes(query);
+            const okMode = (mode==='all') || (mode===id) || (id==='overview' && mode==='overview');
+            const isBeyond = el.dataset.beyond === '1';
+            const isExpanded = expanded.has(id);
+            const okLimit = isExpanded || !isBeyond;
+            const show = okQuery && okMode && okLimit;
+            el.style.display = show ? '' : 'none';
+            if(show) shown++;
+          });
+          const section = list.closest('[data-section]');
+          if(section){
+            const showSection = (mode==='all' || mode===section.dataset.section) && (!query || shown>0);
+            section.style.display = showSection ? '' : 'none';
+          }
+        });
+
+        const caseWrap = document.querySelector('[id="case" data-section="case"]');
+        if(caseWrap){
+          caseWrap.style.display = (mode==='all' || mode==='case') ? '' : 'none';
+        }
+      }
+
+      document.addEventListener('click', (e)=>{
+        const b = e.target.closest('button[data-more]');
+        if(b){
+          const id = b.dataset.more;
+          if(expanded.has(id)){
+            expanded.delete(id);
+            b.textContent = id==='overview' ? '查看全部' : '查看更多';
+          } else {
+            expanded.add(id);
+            b.textContent = '收起';
+          }
+          applyLimits();
+          apply();
+          return;
+        }
+      });
+      if(seg) seg.addEventListener('click', (e)=>{
+        const b = e.target.closest('button');
+        if(!b) return;
+        setMode(b.dataset.filter);
+      });
+      if(q) q.addEventListener('input', apply);
+
+      // ensure external links open in new tab
+      document.querySelectorAll("a[href^='http']").forEach(a=>{
+        a.target = '_blank';
+        a.rel = 'noopener noreferrer';
+      });
+clampDetails();
+      applyLimits();
+      apply();
+    })();
+  </script>
+
+<script>
+function initThemeToggle(){
+  const saved = localStorage.getItem('aihr_theme');
+  if(saved==='dark'){document.documentElement.setAttribute('data-theme','dark');}
+  const btn=document.getElementById('themeToggle');
+  if(!btn) return;
+  btn.addEventListener('click',()=>{
+    const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+    if(isDark){document.documentElement.removeAttribute('data-theme');localStorage.setItem('aihr_theme','light');}
+    else{document.documentElement.setAttribute('data-theme','dark');localStorage.setItem('aihr_theme','dark');}
+  });
+}
+document.addEventListener('DOMContentLoaded', initThemeToggle);
+  document.querySelectorAll("a[href^=\"http\"]").forEach(a=>{a.target="_blank";a.rel="noopener noreferrer";});
+
+
+      function setSection(sec){
+        const isAll = !sec || sec === 'all';
+        document.body.setAttribute('data-mode', isAll ? 'all' : 'single');
+
+        // Important: clear any inline display styles from the old tab/filter logic
+        document.querySelectorAll('.section, .card[data-section]').forEach(el => { el.style.display = ''; });
+
+        // clear active
+        document.querySelectorAll('.section.active, .card[data-section].active').forEach(el=>el.classList.remove('active'));
+
+        if(isAll) return;
+
+        const target = document.querySelector(`.section[data-section="${sec}"], .card[data-section="${sec}"]`);
+        if(target){
+          target.classList.add('active');
+          target.scrollIntoView({block:'start'});
+        }
+      }
+
+      function getInitialSection(){
+        const sp = new URLSearchParams(location.search);
+        const qs = sp.get('section');
+        if(qs) return qs;
+        const h = (location.hash||'').replace('#','');
+        if(h) return h;
+        return 'all';
+      }
+
+      const picker = document.getElementById('sectionPicker');
+      const initSec = getInitialSection();
+      if(picker){
+        picker.value = initSec;
+        picker.addEventListener('change', ()=>{
+          const sec = picker.value;
+          const url = new URL(location.href);
+          if(sec==='all'){
+            url.searchParams.delete('section');
+          }else{
+            url.searchParams.set('section', sec);
+          }
+          history.replaceState(null,'',url.toString());
+          setSection(sec);
+        });
+      }
+      setSection(initSec);
+</script>
+</body>
+</html>
